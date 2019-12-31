@@ -1,41 +1,42 @@
-> source("ProgrammingAssignment2/cachematrix.R")
-> my_matrix <- makeCacheMatrix(matrix(1:4, 2, 2))
-> my_matrix$get()
-     [,1] [,2]
-[1,]    1    3
-[2,]    2    4
-> my_matrix$getInverse()
-NULL
-> cacheSolve(my_matrix)
-     [,1] [,2]
-[1,]   -2  1.5
-[2,]    1 -0.5
-> cacheSolve(my_matrix)
-getting cached data
-     [,1] [,2]
-[1,]   -2  1.5
-[2,]    1 -0.5
-> my_matrix$getInverse()
-     [,1] [,2]
-[1,]   -2  1.5
-[2,]    1 -0.5
-> my_matrix$set(matrix(c(2, 2, 1, 4), 2, 2))
-> my_matrix$get()
-     [,1] [,2]
-[1,]    2    1
-[2,]    2    4
-> my_matrix$getInverse()
-NULL
-> cacheSolve(my_matrix)
-           [,1]       [,2]
-[1,]  0.6666667 -0.1666667
-[2,] -0.3333333  0.3333333
-> cacheSolve(my_matrix)
-getting cached data
-           [,1]       [,2]
-[1,]  0.6666667 -0.1666667
-[2,] -0.3333333  0.3333333
-> my_matrix$getInverse()
-           [,1]       [,2]
-[1,]  0.6666667 -0.1666667
-[2,] -0.3333333  0.3333333
+## Put comments here that give an overall description of what your
+## functions do
+
+## caching the inverse of a matrix
+ 
+## makeCacheMatrix function creates a special "matrix" object that can cache its inverse.
+#1.  set the value of the matrix
+#2.  get the value of the matrix
+#3.  set the value of the inverse
+#4.  get the value of the inverse
+ 
+makeCacheMatrix <- function(x = matrix()) {
+ 
+    i <- NULL
+    set <- function(y) {
+      x <<- y
+      i <<- NULL
+    }
+    get <- function() x
+    setinv <- function(solve) i <<- solve
+    getinv <- function() i
+    list(set = set, get = get, setinv = setinv, getinv = getinv)
+ 
+}
+ 
+ 
+## `cacheSolve` function computes the inverse of the special "matrix" returned by `makeCacheMatrix` above. 
+#If the inverse has already been calculated (and the matrix has not changed), then`cacheSolve` should retrieve the inverse from the cache.
+ 
+## At the moment giving: Error in x$getinv : $ operator is invalid for atomic vectors
+cachesolve <- function(x, ...) { 
+    i<- x$getinv()
+    if(!is.null(i)) {
+      message("getting cached data")
+      return(i)
+    }
+    data <- x$get()
+    i<- solve(data, ...)
+    x$setinv(i)
+    i
+ 
+}
